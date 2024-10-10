@@ -1,4 +1,4 @@
-import { SOLID } from "../../packages/pod-client/solid";
+import { SOLID } from "../../../solid";
 
 function Login() {
   return <p>Hello world from login page {SOLID}</p>;
