@@ -236,8 +236,8 @@ __metadata:
 
 "@datavillage-me/pod-client@file:../lib::locator=pod-client%40workspace%3A.":
   version: 0.1.0
-  resolution: "@datavillage-me/pod-client@file:../lib#../lib::hash=2a23a3&locator=pod-client%40workspace%3A."
-  checksum: 10c0/29a284e7e897eeef1fb91bb239cecbb0c84cccf313ffe2385354a38c42f04cbf7f30c7589ccf5cb5acd0a7e6029f9a5a4288fc346c5f07cbcb8d2bb92cef3964
+  resolution: "@datavillage-me/pod-client@file:../lib#../lib::hash=3fc1a7&locator=pod-client%40workspace%3A."
+  checksum: 10c0/2b013c596230547ad25a6a318cae44c1094edaed2986ed1b92d8dd4989eae782682548205dc177407da5bafa0e5d2ea51f48aa6ea447d5d4da08a670b3dcbd11
   languageName: node
   linkType: hard
 
