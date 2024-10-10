@@ -234,6 +234,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@datavillage-me/pod-client@file:../lib::locator=pod-client%40workspace%3A.":
+  version: 0.1.0
+  resolution: "@datavillage-me/pod-client@file:../lib#../lib::hash=2a23a3&locator=pod-client%40workspace%3A."
+  checksum: 10c0/29a284e7e897eeef1fb91bb239cecbb0c84cccf313ffe2385354a38c42f04cbf7f30c7589ccf5cb5acd0a7e6029f9a5a4288fc346c5f07cbcb8d2bb92cef3964
+  languageName: node
+  linkType: hard
+
 "@esbuild/aix-ppc64@npm:0.21.5":
   version: 0.21.5
   resolution: "@esbuild/aix-ppc64@npm:0.21.5"
@@ -2349,6 +2356,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "pod-client@workspace:."
   dependencies:
+    "@datavillage-me/pod-client": ../lib
     "@eslint/js": "npm:^9.11.1"
     "@types/react": "npm:^18.3.10"
     "@types/react-dom": "npm:^18.3.0"
