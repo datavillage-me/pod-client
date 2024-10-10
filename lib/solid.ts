@@ -3,8 +3,19 @@ import {
   getDefaultSession,
   handleIncomingRedirect,
 } from "@inrupt/solid-client-authn-browser";
+import { Pod } from "./dist";
 
 export const SOLID = "solid";
+
+export class SolidPod implements Pod {
+  webId: string;
+  issuer: string;
+
+  constructor(webId: string, issuer: string) {
+    this.webId = webId;
+    this.issuer = issuer;
+  }
+}
 
 export async function startLogin(): Promise<void> {
   // Start the Login Process if not already logged in.
@@ -17,11 +28,11 @@ export async function startLogin(): Promise<void> {
   }
 }
 
-export async function finishLogin(): Promise<string> {
+export async function finishLogin(): Promise<SolidPod> {
   const sessionInfo = await handleIncomingRedirect();
   if (!sessionInfo || !sessionInfo.webId) {
-    return "";
+    Promise.reject("Could not get webId from session");
   }
 
-  return sessionInfo.webId;
+  return new SolidPod(sessionInfo.webId, "https://idp.dev.jouw.id");
 }
