@@ -1,1 +1,2 @@
-export * from "./solid.ts"
+export * from "./solid"
+export * from "./interfaces"
