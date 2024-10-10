@@ -1,9 +1,10 @@
-import { Button } from "antd";
+import { SOLID } from "@datavillage-me/pod-client";
 
-import { startLogin } from "@datavillage-me/pod-client";
+// import { startLogin } from "@datavillage-me/pod-client";
 
 function Login() {
-  return <Button onClick={startLogin}>Log in</Button>;
+  return SOLID;
+  // return <Button onClick={startLogin}>Log in</Button>;
 }
 
 export default Login;
