@@ -1,7 +1,9 @@
-import { SOLID } from "../../../solid";
+import { Button } from "antd";
+
+import { startLogin } from "../../../solid";
 
 function Login() {
-  return <p>Hello world from login page {SOLID}</p>;
+  return <Button onClick={startLogin}>Log in</Button>;
 }
 
 export default Login;
