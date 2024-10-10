@@ -2,7 +2,7 @@
   "name": "pod-client",
   "version": "0.1.0",
   "scripts": {
-    "build": "tsup"
+    "build": "tsup index.ts"
   },
   "author": "",
   "license": "ISC",
