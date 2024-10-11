@@ -15,16 +15,18 @@ export default function Callback() {
   addCounter();
 
   const getPod = useCallback(async () => {
-    if (counter < 3) {
-      setPod(await finishLogin(issuer));
+    if (pod == undefined) {
+      const p = await finishLogin(issuer);
+      console.log("finish login result", p);
+      if (p) {
+        console.log("setting pod", p);
+        setPod(p);
+      }
     }
-  }, []);
-
-  if (counter < 3) {
-    getPod();
-  }
+  }, [pod, setPod]);
 
   if (!pod) {
+    getPod();
     return <>Not logged in</>;
   }
   pod.askAccess([

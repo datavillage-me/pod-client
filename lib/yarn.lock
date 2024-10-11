@@ -195,7 +195,7 @@
   resolved "https://registry.yarnpkg.com/@inrupt/solid-client-errors/-/solid-client-errors-0.0.2.tgz#58b1e44024cf344866f23e4866db7a0e2a0e816c"
   integrity sha512-Nhq39DJMKDMc35/VFT168v9JwuKzfzCHPN4fYYAE/Q0ECtM6PuBGT7nu0gZ06+S0pZQasHDyTkOGXRIx+zkvJA==
 
-"@inrupt/solid-client-vc@^1.0.3":
+"@inrupt/solid-client-vc@^1.0.3", "@inrupt/solid-client-vc@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@inrupt/solid-client-vc/-/solid-client-vc-1.1.0.tgz#54210c2080fc839ea99ec7240641ed567d0ee81a"
   integrity sha512-+KtEI62O3m8pRXEfi7xHJaZq5RscPB3ovxThD5sVzi2DWPxvsb82eq4zrGT3ot/gGPC5x2oYkyDWdSZWqu3zgg==
