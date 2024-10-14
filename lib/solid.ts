@@ -7,7 +7,7 @@ export const SOLID = "solid";
 
 type FetchFn = typeof fetch;
 
-export class SolidPod implements Pod {
+export class UmaPod implements Pod {
   webId: string;
   issuer: string;
   fetch: FetchFn;
@@ -20,7 +20,7 @@ export class SolidPod implements Pod {
   }
 
   // TODO: rename
-  async askAccess(
+  async getAmaRedirectUrl(
     resourceUris: string[],
     amaRootUrl: string,
     redirectUrl: string
@@ -72,9 +72,7 @@ export async function startLogin(issuer: string): Promise<void> {
   }
 }
 
-export async function finishLogin(
-  issuer: string
-): Promise<SolidPod | undefined> {
+export async function finishLogin(issuer: string): Promise<UmaPod | undefined> {
   const session = await getDefaultSession();
   console.log("Got session", session);
   await session.handleIncomingRedirect();
@@ -88,7 +86,7 @@ export async function finishLogin(
     return undefined;
   }
 
-  return new SolidPod(session.info.webId, issuer, session.fetch);
+  return new UmaPod(session.info.webId, issuer, session.fetch);
 }
 
 function getDefaultContexts(): { "@context": string[] } {

@@ -1,4 +1,4 @@
-import { finishLogin, SolidPod } from "@datavillage-me/pod-client";
+import { finishLogin, UmaPod } from "@datavillage-me/pod-client";
 import { useCallback, useState } from "react";
 // import { redirect } from "react-router-dom";
 
@@ -8,7 +8,7 @@ export default function LoginCallback() {
   const redirectAfterAma = "http://localhost:5173/callback?from=ama";
   // const issuer = "https://openid.sandbox-pod.datanutsbedrijf.be/";
 
-  const [pod, setPod] = useState<SolidPod>();
+  const [pod, setPod] = useState<UmaPod>();
   const [counter, setCounter] = useState<number>(0);
   // const [askedAccess] = useState<boolean>(false);
 
@@ -42,7 +42,7 @@ export default function LoginCallback() {
       if (!pod) {
         return;
       }
-      const amaRedirect = await pod.askAccess(
+      const amaRedirect = await pod.getAmaRedirectUrl(
         resources,
         amaRoot,
         redirectAfterAma
