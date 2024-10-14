@@ -28,7 +28,7 @@ export default function LoginCallback() {
 
   const getPod = useCallback(async () => {
     if (pod == undefined) {
-      const p = await finishLogin(issuer);
+      const p = await finishLogin();
       console.log("finish login result", p);
       if (p) {
         console.log("setting pod", p);

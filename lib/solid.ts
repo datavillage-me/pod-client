@@ -9,13 +9,11 @@ type FetchFn = typeof fetch;
 
 export class UmaPod implements Pod {
   webId: string;
-  issuer: string;
   fetch: FetchFn;
 
-  constructor(webId: string, issuer: string, fetch: FetchFn) {
+  constructor(webId: string, fetch: FetchFn) {
     console.log("Creating solid pod for", webId);
     this.webId = webId;
-    this.issuer = issuer;
     this.fetch = fetch;
   }
 
@@ -72,7 +70,7 @@ export async function startLogin(issuer: string): Promise<void> {
   }
 }
 
-export async function finishLogin(issuer: string): Promise<UmaPod | undefined> {
+export async function finishLogin(): Promise<UmaPod | undefined> {
   const session = await getDefaultSession();
   console.log("Got session", session);
   await session.handleIncomingRedirect();
@@ -86,7 +84,7 @@ export async function finishLogin(issuer: string): Promise<UmaPod | undefined> {
     return undefined;
   }
 
-  return new UmaPod(session.info.webId, issuer, session.fetch);
+  return new UmaPod(session.info.webId, session.fetch);
 }
 
 function getDefaultContexts(): { "@context": string[] } {
@@ -178,6 +176,19 @@ export async function getVcInfofromResource(resourceUri: string): Promise<
 
   console.log("got response headers", response.headers.get("Www-Authenticate"));
   return parseWwwAuthenticteHeader(response.headers.get("Www-Authenticate"));
+}
+
+export async function getCurrentPod(): Promise<Pod | undefined> {
+  const session = await getDefaultSession();
+
+  if (!session.info.isLoggedIn) {
+    console.log("User not logged in");
+    return undefined;
+  } else if (!session.info.webId) {
+    throw Error("User is logged in but no webId was found");
+  }
+
+  return new UmaPod(session.info.webId, session.fetch);
 }
 
 function parseWwwAuthenticteHeader(header: string): {
