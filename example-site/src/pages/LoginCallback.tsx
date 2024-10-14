@@ -5,10 +5,10 @@ const callbackFunction = async () => {
   const pod = await finishLogin();
   if (!pod) {
     console.log("Could not finish login");
-    throw Error("Could not finish login process");
+  } else {
+    const loc = document.location;
+    loc.assign("http://localhost:5173/access");
   }
-  const loc = document.location;
-  loc.assign("http://localhost:5173/access");
 };
 
 export default function LoginCallback() {

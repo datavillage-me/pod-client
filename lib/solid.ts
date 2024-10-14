@@ -8,17 +8,30 @@ import { issueVerifiableCredential, JsonLd } from "@inrupt/solid-client-vc";
 import { UmaConfiguration } from "@inrupt/solid-client-access-grants/dist/type/UmaConfiguration";
 
 export const SOLID = "solid";
+const sessionKey = "dv-solid-session";
+
+// TODO: DO NOT COMMIT A VALUE, FETCH TOKEN FROM IDP!!
+const appIdToken = "";
 
 type FetchFn = typeof fetch;
+export type UmaPodConfig = {
+  userWebId: string;
+  applicationIdToken: string;
+};
 
 export class UmaPod implements Pod {
-  webId: string;
+  userWebId: string;
+  applicationIdToken: string;
   fetch: FetchFn;
 
-  constructor(webId: string, fetch: FetchFn) {
-    console.log("Creating solid pod for", webId);
-    this.webId = webId;
-    this.fetch = fetch;
+  constructor(options: UmaPodConfig) {
+    console.log("Creating solid pod for", options.userWebId);
+    this.userWebId = options.userWebId;
+    this.fetch = (input, init) =>
+      this.fetch(input, {
+        ...init,
+        headers: { Authentication: `Bearer ${options.applicationIdToken}` },
+      });
   }
 
   // TODO: rename
@@ -30,7 +43,7 @@ export class UmaPod implements Pod {
     // Create an access request
     const accessRequest = constructAccessRequest(
       resourceUris,
-      this.webId,
+      this.userWebId,
       5 * 60
     );
 
@@ -46,7 +59,7 @@ export class UmaPod implements Pod {
     // TODO: don't hardcode /issue endpoint
     const requestVc = await issueVerifiableCredential(
       `${verifiable_credential_issuer}/issue`,
-      getSubjectClaims(resourceUris, this.webId),
+      getSubjectClaims(resourceUris, this.userWebId),
       getCredentialClaims(5 * 60),
       { returnLegacyJsonld: false, fetch: this.fetch }
     );
@@ -91,7 +104,16 @@ export async function finishLogin(): Promise<UmaPod | undefined> {
     return undefined;
   }
 
-  return new UmaPod(session.info.webId, session.fetch);
+  // TODO: store sessionId
+  const podConfig: UmaPodConfig = {
+    userWebId: session.info.webId,
+    applicationIdToken: appIdToken,
+  };
+
+  sessionStorage.setItem(sessionKey, JSON.stringify(podConfig));
+
+  // TODO: get token
+  return new UmaPod(podConfig);
 }
 
 function getDefaultContexts(): { "@context": string[] } {
@@ -182,23 +204,20 @@ export async function getVcInfofromResource(resourceUri: string): Promise<
   });
 
   console.log("got response headers", response.headers.get("Www-Authenticate"));
-  return parseWwwAuthenticteHeader(response.headers.get("Www-Authenticate"));
+  return parseWwwAuthenticateHeader(response.headers.get("Www-Authenticate"));
 }
 
 export async function getCurrentPod(): Promise<Pod | undefined> {
-  const session = await getDefaultSession();
-
-  if (!session.info.isLoggedIn) {
-    console.log("User not logged in");
+  const sessionConfig = JSON.parse(sessionStorage.getItem(sessionKey));
+  if (sessionConfig == null) {
+    console.log("user not logged in");
     return undefined;
-  } else if (!session.info.webId) {
-    throw Error("User is logged in but no webId was found");
   }
-
-  return new UmaPod(session.info.webId, session.fetch);
+  console.log("config from storage", sessionConfig);
+  return new UmaPod(sessionConfig as UmaPodConfig);
 }
 
-function parseWwwAuthenticteHeader(header: string): {
+function parseWwwAuthenticateHeader(header: string): {
   umaUri: string;
   permissionTicket: string;
 } {
