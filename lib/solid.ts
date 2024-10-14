@@ -1,10 +1,7 @@
-import {
-  login,
-  getDefaultSession,
-  handleIncomingRedirect,
-} from "@inrupt/solid-client-authn-browser";
+import { login, getDefaultSession } from "@inrupt/solid-client-authn-browser";
 import { Pod } from "./interfaces";
 import { issueVerifiableCredential, JsonLd } from "@inrupt/solid-client-vc";
+import { UmaConfiguration } from "@inrupt/solid-client-access-grants/dist/type/UmaConfiguration";
 
 export const SOLID = "solid";
 
@@ -22,7 +19,13 @@ export class SolidPod implements Pod {
     this.fetch = fetch;
   }
 
-  async askAccess(resourceUris: string[]): Promise<void> {
+  // TODO: rename
+  async askAccess(
+    resourceUris: string[],
+    amaRootUrl: string,
+    redirectUrl: string
+  ): Promise<string> {
+    // Create an access request
     const accessRequest = constructAccessRequest(
       resourceUris,
       this.webId,
@@ -31,14 +34,30 @@ export class SolidPod implements Pod {
 
     console.log(accessRequest);
 
+    // Assume all resources have same vc
+    const { umaUri } = await getVcInfofromResource(resourceUris[0]);
+    console.log("Got uma uri", umaUri);
+
+    const { verifiable_credential_issuer } = await getUmaConfiguration(umaUri);
+
+    // issue access request to VC
+    // TODO: don't hardcode /issue endpoint
     const requestVc = await issueVerifiableCredential(
-      "",
+      `${verifiable_credential_issuer}/issue`,
       getSubjectClaims(resourceUris, this.webId),
       getCredentialClaims(5 * 60),
-      { returnLegacyJsonld: false }
+      { returnLegacyJsonld: false, fetch: this.fetch }
     );
 
     console.log("requestVc", requestVc);
+
+    // redirect to AMA with access request
+    const urlParams = `?requestVcUrl=${encodeURIComponent(
+      requestVc.id
+    )}&redirectUrl=${encodeURIComponent(redirectUrl)}`;
+    console.log("URL params", urlParams);
+
+    return `${amaRootUrl}${urlParams}`;
   }
 }
 
@@ -102,13 +121,13 @@ function getSubjectClaims(resources: string[], webId: string): JsonLd {
 }
 
 function getCredentialClaims(duration_s: number): JsonLd {
-  const today = new Date();
-  const expiration = new Date(today.getSeconds() + duration_s);
+  const today = Date.now();
+  const expiration = new Date(today + duration_s * 1000);
   return {
     ...getDefaultContexts(),
-    issuanceDate: today.toISOString(),
-    exirationDate: expiration.toISOString(),
-    type: ["SolidAccessRequest", "VerifiableCredential"],
+    issuanceDate: new Date(today).toISOString(),
+    expirationDate: expiration.toISOString(),
+    type: ["SolidAccessRequest"],
   };
 }
 
@@ -144,4 +163,43 @@ export function constructAccessRequest(
     exirationDate: expiration.toISOString(),
     type: ["SolidAccessRequest", "VerifiableCredential"],
   };
+}
+
+export async function getVcInfofromResource(resourceUri: string): Promise<
+  | {
+      umaUri: string;
+      permissionTicket: string;
+    }
+  | undefined
+> {
+  // TODO find more elegant way
+  let response: Response;
+  await fetch(resourceUri).then((r) => {
+    response = r;
+  });
+
+  console.log("got response headers", response.headers.get("Www-Authenticate"));
+  return parseWwwAuthenticteHeader(response.headers.get("Www-Authenticate"));
+}
+
+function parseWwwAuthenticteHeader(header: string): {
+  umaUri: string;
+  permissionTicket: string;
+} {
+  const header_split = header.split(",");
+  const umaStartIndex = header_split[0].indexOf('"') + 1;
+  const umaUri = header_split[0].slice(umaStartIndex, -1);
+
+  const ticketStartIndex = header_split[1].indexOf('"') + 1;
+  const permissionTicket = header_split[1].slice(ticketStartIndex, -1);
+
+  return {
+    umaUri,
+    permissionTicket,
+  };
+}
+
+async function getUmaConfiguration(umaUri: string): Promise<UmaConfiguration> {
+  const response = await fetch(`${umaUri}/.well-known/uma2-configuration`);
+  return await response.json();
 }
