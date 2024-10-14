@@ -1,4 +1,8 @@
-import { login, getDefaultSession } from "@inrupt/solid-client-authn-browser";
+import {
+  login,
+  getDefaultSession,
+  handleIncomingRedirect,
+} from "@inrupt/solid-client-authn-browser";
 import { Pod } from "./interfaces";
 import { issueVerifiableCredential, JsonLd } from "@inrupt/solid-client-vc";
 import { UmaConfiguration } from "@inrupt/solid-client-access-grants/dist/type/UmaConfiguration";
@@ -59,21 +63,24 @@ export class UmaPod implements Pod {
   }
 }
 
-export async function startLogin(issuer: string): Promise<void> {
+export async function startLogin(
+  issuer: string,
+  callback: string
+): Promise<void> {
   // Start the Login Process if not already logged in.
   if (!getDefaultSession().info.isLoggedIn) {
     await login({
       oidcIssuer: issuer,
-      redirectUrl: new URL("/callback", window.location.href).toString(),
+      redirectUrl: callback,
       clientName: "My application",
     });
   }
 }
 
 export async function finishLogin(): Promise<UmaPod | undefined> {
+  await handleIncomingRedirect();
   const session = await getDefaultSession();
   console.log("Got session", session);
-  await session.handleIncomingRedirect();
   // const session = await getDefaultSession();
 
   if (!session.info.isLoggedIn) {

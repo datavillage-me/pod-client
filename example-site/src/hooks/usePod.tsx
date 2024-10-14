@@ -1,6 +1,6 @@
 import { getCurrentPod, Pod } from "@datavillage-me/pod-client";
 import { useMemo } from "react";
 
-export function usePod(): Promise<Pod | undefined> {
+export function usePod(): Pod | undefined {
   return useMemo(() => getCurrentPod(), []);
 }
