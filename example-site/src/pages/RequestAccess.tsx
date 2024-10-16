@@ -2,22 +2,17 @@ import { UmaPod } from "@datavillage-me/pod-client";
 import { usePod } from "../hooks/usePod";
 import { Button } from "antd";
 
-// const requestAccess = async (pod: UmaPod) => {
-//   console.log("In request access");
-//   const amaRoot = "https://dashboard.dev.jouw.id/register";
-//   const redirectAfterAma = "http://localhost:5173/access?callback=true";
+const requestAccess = async (pod: UmaPod) => {
+  console.log("In request access");
 
-//   const amaRedirect = await pod.getAmaRedirectUrl(
-//     [
-//       "https://storage.sandbox-nl-pod.datanutsbedrijf.be/b6738617-737c-4a03-8178-b21543efe44b/sndk/",
-//     ],
-//     amaRoot,
-//     redirectAfterAma
-//   );
-
-//   const loc = document.location;
-//   loc.assign(amaRedirect);
-// };
+  // TODO: log access grant
+  await pod.grantAccess(
+    "https://epc.datavillage.me/webid", // TODO: change with cage webId
+    [
+      "https://storage.sandbox-nl-pod.datanutsbedrijf.be/b6738617-737c-4a03-8178-b21543efe44b/sndk/userProfile.ttl",
+    ]
+  );
+};
 
 export default function RequestAccess() {
   const pod = usePod() as UmaPod;
@@ -28,9 +23,9 @@ export default function RequestAccess() {
     return <>Not logged in</>;
   }
 
-  // const startRequest = async () => {
-  //   await requestAccess(pod);
-  // };
+  const startRequest = async () => {
+    await requestAccess(pod);
+  };
   console.log("pod in requestaccess", pod);
   return (
     <>
@@ -38,7 +33,7 @@ export default function RequestAccess() {
         Logged in as {pod.userWebId}
         {isCallback ? "(callback)" : "(no callback)"}
       </p>
-      <Button>Request access</Button>
+      <Button onClick={startRequest}>Request access</Button>
     </>
   );
 }

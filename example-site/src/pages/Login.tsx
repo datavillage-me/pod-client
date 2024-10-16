@@ -2,7 +2,7 @@ import { SOLID, startLogin } from "@datavillage-me/pod-client";
 
 function Login() {
   const issuer = "https://idp.dev.jouw.id";
-  const callbackUrl = "http://localhost:5173/login/callback";
+  const callbackUrl = "http://localhost:5173/access";
   // const issuer = "https://openid.sandbox-pod.datanutsbedrijf.be/";
   startLogin(issuer, callbackUrl);
   return SOLID;

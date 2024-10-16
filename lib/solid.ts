@@ -2,6 +2,8 @@ import {
   login,
   getDefaultSession,
   handleIncomingRedirect,
+  EVENTS,
+  fetch as authFetch,
 } from "@inrupt/solid-client-authn-browser";
 import { Pod } from "./interfaces";
 import { issueVerifiableCredential, JsonLd } from "@inrupt/solid-client-vc";
@@ -21,58 +23,25 @@ export type UmaPodConfig = {
 
 export class UmaPod implements Pod {
   userWebId: string;
-  applicationIdToken: string;
   fetch: FetchFn;
 
-  constructor(options: UmaPodConfig) {
-    console.log("Creating solid pod for", options.userWebId);
-    this.userWebId = options.userWebId;
-    this.fetch = (input, init) =>
-      this.fetch(input, {
-        ...init,
-        headers: { Authentication: `Bearer ${options.applicationIdToken}` },
-      });
+  constructor(userWebId: string, fetch: FetchFn) {
+    console.log("Creating solid pod for", userWebId);
+    this.userWebId = userWebId;
+    this.fetch = fetch;
   }
 
-  // TODO: rename
-  async getAmaRedirectUrl(
-    resourceUris: string[],
-    amaRootUrl: string,
-    redirectUrl: string
-  ): Promise<string> {
-    // Create an access request
-    const accessRequest = constructAccessRequest(
-      resourceUris,
-      this.userWebId,
-      5 * 60
-    );
+  async grantAccess(webId: string, resources: string[]) {
+    if (!resources.length) return;
+    // assume same vc
+    const response = await this.fetch(resources[0]);
+    console.log("hopefully response is OK", response);
 
-    console.log(accessRequest);
+    const { umaUri } = await getVcUrifromResource(resources[0]);
+    console.log("Got umaUri", umaUri);
 
-    // Assume all resources have same vc
-    const { umaUri } = await getVcInfofromResource(resourceUris[0]);
-    console.log("Got uma uri", umaUri);
-
-    const { verifiable_credential_issuer } = await getUmaConfiguration(umaUri);
-
-    // issue access request to VC
-    // TODO: don't hardcode /issue endpoint
-    const requestVc = await issueVerifiableCredential(
-      `${verifiable_credential_issuer}/issue`,
-      getSubjectClaims(resourceUris, this.userWebId),
-      getCredentialClaims(5 * 60),
-      { returnLegacyJsonld: false, fetch: this.fetch }
-    );
-
-    console.log("requestVc", requestVc);
-
-    // redirect to AMA with access request
-    const urlParams = `?requestVcUrl=${encodeURIComponent(
-      requestVc.id
-    )}&redirectUrl=${encodeURIComponent(redirectUrl)}`;
-    console.log("URL params", urlParams);
-
-    return `${amaRootUrl}${urlParams}`;
+    // create and issue request
+    const accessRequest = constructAccessGrant(webId, resources, 5 * 60);
   }
 }
 
@@ -82,38 +51,15 @@ export async function startLogin(
 ): Promise<void> {
   // Start the Login Process if not already logged in.
   if (!getDefaultSession().info.isLoggedIn) {
+    console.log("logging in with client id");
     await login({
       oidcIssuer: issuer,
       redirectUrl: callback,
       clientName: "My application",
+      clientId: "https://epc.datavillage.me/appid",
+      clientSecret: appIdToken,
     });
   }
-}
-
-export async function finishLogin(): Promise<UmaPod | undefined> {
-  await handleIncomingRedirect();
-  const session = await getDefaultSession();
-  console.log("Got session", session);
-  // const session = await getDefaultSession();
-
-  if (!session.info.isLoggedIn) {
-    console.log("User not logged in");
-    return undefined;
-  } else if (!session.info.webId) {
-    console.log("No session webId", session.info);
-    return undefined;
-  }
-
-  // TODO: store sessionId
-  const podConfig: UmaPodConfig = {
-    userWebId: session.info.webId,
-    applicationIdToken: appIdToken,
-  };
-
-  sessionStorage.setItem(sessionKey, JSON.stringify(podConfig));
-
-  // TODO: get token
-  return new UmaPod(podConfig);
 }
 
 function getDefaultContexts(): { "@context": string[] } {
@@ -126,40 +72,10 @@ function getDefaultContexts(): { "@context": string[] } {
   };
 }
 
-function getSubjectClaims(resources: string[], webId: string): JsonLd {
-  console.log("Getting subject claims for", webId);
-  return {
-    ...getDefaultContexts(),
-    hasConsent: {
-      mode: [
-        "http://www.w3.org/ns/auth/acl#Read",
-        "http://www.w3.org/ns/auth/acl#Write",
-      ],
-      hasStatus: "https://w3id.org/GConsent#ConsentStatusRequested",
-      forPersonalData: resources,
-      isConsentForDataSubject: webId,
-
-      forPurpose:
-        "https://solid.data.vlaanderen.be/doc/concept/Purpose/Acme-Purpose",
-    },
-  };
-}
-
-function getCredentialClaims(duration_s: number): JsonLd {
-  const today = Date.now();
-  const expiration = new Date(today + duration_s * 1000);
-  return {
-    ...getDefaultContexts(),
-    issuanceDate: new Date(today).toISOString(),
-    expirationDate: expiration.toISOString(),
-    type: ["SolidAccessRequest"],
-  };
-}
-
 // TODO: don't use deprecated type
-export function constructAccessRequest(
-  resources: string[],
+export function constructAccessGrant(
   webId: string,
+  resources: string[],
   duration_s: number
 ): JsonLd {
   const today = new Date();
@@ -167,7 +83,6 @@ export function constructAccessRequest(
   return {
     "@context": [
       "https://www.w3.org/2018/credentials/v1",
-      "https://solid.data.vlaanderen.be/ns/access/2023-03-15/access.jsonld",
       "https://schema.inrupt.com/credentials/v1.jsonld",
     ],
     credentialSubject: {
@@ -176,21 +91,17 @@ export function constructAccessRequest(
           "http://www.w3.org/ns/auth/acl#Read",
           "http://www.w3.org/ns/auth/acl#Write",
         ],
-        hasStatus: "https://w3id.org/GConsent#ConsentStatusRequested",
+        hasStatus: "https://w3id.org/GConsent#ConsentStatusExplicitlyGiven",
         forPersonalData: resources,
         isConsentForDataSubject: webId,
-
-        forPurpose:
-          "https://solid.data.vlaanderen.be/doc/concept/Purpose/Acme-Purpose",
+        inherit: true,
       },
     },
-    issuanceDate: today.toISOString(),
-    exirationDate: expiration.toISOString(),
-    type: ["SolidAccessRequest", "VerifiableCredential"],
+    expirationDate: expiration.toISOString(),
   };
 }
 
-export async function getVcInfofromResource(resourceUri: string): Promise<
+export async function getVcUrifromResource(resourceUri: string): Promise<
   | {
       umaUri: string;
       permissionTicket: string;
@@ -208,13 +119,19 @@ export async function getVcInfofromResource(resourceUri: string): Promise<
 }
 
 export async function getCurrentPod(): Promise<Pod | undefined> {
-  const sessionConfig = JSON.parse(sessionStorage.getItem(sessionKey));
-  if (sessionConfig == null) {
-    console.log("user not logged in");
-    return undefined;
-  }
-  console.log("config from storage", sessionConfig);
-  return new UmaPod(sessionConfig as UmaPodConfig);
+  const unauth_session = getDefaultSession();
+  const currentLocation = window.location;
+
+  unauth_session.events.on(EVENTS.SESSION_RESTORED, (url) => {
+    console.log("setting to current location", currentLocation);
+    window.location = currentLocation;
+  });
+
+  const sessionInfo = await handleIncomingRedirect({
+    restorePreviousSession: true,
+  });
+
+  return new UmaPod(sessionInfo.webId, authFetch);
 }
 
 function parseWwwAuthenticateHeader(header: string): {
