@@ -12,10 +12,6 @@ import {
 import { UmaConfiguration } from "@inrupt/solid-client-access-grants/dist/type/UmaConfiguration";
 
 export const SOLID = "solid";
-const sessionKey = "dv-solid-session";
-
-// TODO: DO NOT COMMIT A VALUE, FETCH TOKEN FROM IDP!!
-const appIdToken = "";
 
 type FetchFn = typeof fetch;
 export type UmaPodConfig = {
@@ -35,10 +31,7 @@ export class UmaPod implements Pod {
 
   async grantAccess(webId: string, resources: string[]) {
     if (!resources.length) return;
-    // assume same vc
-    const response = await this.fetch(resources[0]);
-    console.log("hopefully response is OK", response);
-
+    // assume same vc and uma
     // TODO: should we not keep the configuration of the servers in memory?
     const { umaUri } = await getVcUrifromResource(resources[0]);
     const { verifiable_credential_issuer } = await getUmaConfiguration(umaUri);
@@ -60,7 +53,7 @@ export class UmaPod implements Pod {
 
     if (!accessGrant.ok) {
       throw Error(
-        `Could not set grant at VC server. Got [${
+        `Could not set grant to VC server. Got [${
           accessGrant.status
         }]: ${await accessGrant.text()}`
       );
@@ -80,19 +73,24 @@ export async function startLogin(
       redirectUrl: callback,
       clientName: "My application",
       clientId: "https://epc.datavillage.me/appid",
-      clientSecret: appIdToken,
+      clientSecret: "SOME_SECRET",
     });
   }
 }
 
-function getDefaultContexts(): { "@context": string[] } {
-  return {
-    "@context": [
-      "https://www.w3.org/2018/credentials/v1",
-      "https://solid.data.vlaanderen.be/ns/access/2023-03-15/access.jsonld",
-      "https://schema.inrupt.com/credentials/v1.jsonld",
-    ],
-  };
+export async function getCurrentPod(): Promise<Pod | undefined> {
+  const unauth_session = getDefaultSession();
+  const currentLocation = window.location;
+
+  unauth_session.events.on(EVENTS.SESSION_RESTORED, (url) => {
+    window.location = currentLocation;
+  });
+
+  const sessionInfo = await handleIncomingRedirect({
+    restorePreviousSession: true,
+  });
+
+  return new UmaPod(sessionInfo.webId, unauth_session.fetch);
 }
 
 // TODO: don't use deprecated type
@@ -140,24 +138,7 @@ export async function getVcUrifromResource(resourceUri: string): Promise<
     response = r;
   });
 
-  console.log("got response headers", response.headers.get("Www-Authenticate"));
   return parseWwwAuthenticateHeader(response.headers.get("Www-Authenticate"));
-}
-
-export async function getCurrentPod(): Promise<Pod | undefined> {
-  const unauth_session = getDefaultSession();
-  const currentLocation = window.location;
-
-  unauth_session.events.on(EVENTS.SESSION_RESTORED, (url) => {
-    console.log("setting to current location", currentLocation);
-    window.location = currentLocation;
-  });
-
-  const sessionInfo = await handleIncomingRedirect({
-    restorePreviousSession: true,
-  });
-
-  return new UmaPod(sessionInfo.webId, unauth_session.fetch);
 }
 
 function parseWwwAuthenticateHeader(header: string): {
