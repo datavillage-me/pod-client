@@ -3,10 +3,9 @@ import {
   getDefaultSession,
   handleIncomingRedirect,
   EVENTS,
-  fetch as authFetch,
 } from "@inrupt/solid-client-authn-browser";
 import { Pod } from "./interfaces";
-import { issueVerifiableCredential, JsonLd } from "@inrupt/solid-client-vc";
+import { JsonLd } from "@inrupt/solid-client-vc";
 import { UmaConfiguration } from "@inrupt/solid-client-access-grants/dist/type/UmaConfiguration";
 
 export const SOLID = "solid";
@@ -38,10 +37,20 @@ export class UmaPod implements Pod {
     console.log("hopefully response is OK", response);
 
     const { umaUri } = await getVcUrifromResource(resources[0]);
-    console.log("Got umaUri", umaUri);
+    const { verifiable_credential_issuer } = await getUmaConfiguration(umaUri);
 
     // create and issue request
-    const accessRequest = constructAccessGrant(webId, resources, 5 * 60);
+    const accessRequest = constructAccessRequest(webId, resources, 10);
+    const vcIssueEndpoint = `${verifiable_credential_issuer}/issue`; // TODO: don't hardcode issue endpoint
+
+    const accessGrant = await this.fetch(vcIssueEndpoint, {
+      method: "POST",
+      body: JSON.stringify({ credential: accessRequest }),
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+    });
   }
 }
 
@@ -73,27 +82,30 @@ function getDefaultContexts(): { "@context": string[] } {
 }
 
 // TODO: don't use deprecated type
-export function constructAccessGrant(
+export function constructAccessRequest(
   webId: string,
   resources: string[],
-  duration_s: number
+  duration_days: number
 ): JsonLd {
   const today = new Date();
-  const expiration = new Date(today.getSeconds() + duration_s);
+  const expiration = new Date(
+    today.getTime() + duration_days * 24 * 60 * 60 * 1000
+  ); // days to miliseconds
+
   return {
     "@context": [
       "https://www.w3.org/2018/credentials/v1",
       "https://schema.inrupt.com/credentials/v1.jsonld",
     ],
     credentialSubject: {
-      hasConsent: {
+      providedConsent: {
         mode: [
           "http://www.w3.org/ns/auth/acl#Read",
           "http://www.w3.org/ns/auth/acl#Write",
         ],
         hasStatus: "https://w3id.org/GConsent#ConsentStatusExplicitlyGiven",
         forPersonalData: resources,
-        isConsentForDataSubject: webId,
+        isProvidedTo: webId,
         inherit: true,
       },
     },
@@ -131,7 +143,7 @@ export async function getCurrentPod(): Promise<Pod | undefined> {
     restorePreviousSession: true,
   });
 
-  return new UmaPod(sessionInfo.webId, authFetch);
+  return new UmaPod(sessionInfo.webId, unauth_session.fetch);
 }
 
 function parseWwwAuthenticateHeader(header: string): {
