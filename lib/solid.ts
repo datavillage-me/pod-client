@@ -5,7 +5,10 @@ import {
   EVENTS,
 } from "@inrupt/solid-client-authn-browser";
 import { Pod } from "./interfaces";
-import { JsonLd } from "@inrupt/solid-client-vc";
+import {
+  JsonLd,
+  VerifiableCredentialApiConfiguration,
+} from "@inrupt/solid-client-vc";
 import { UmaConfiguration } from "@inrupt/solid-client-access-grants/dist/type/UmaConfiguration";
 
 export const SOLID = "solid";
@@ -36,14 +39,17 @@ export class UmaPod implements Pod {
     const response = await this.fetch(resources[0]);
     console.log("hopefully response is OK", response);
 
+    // TODO: should we not keep the configuration of the servers in memory?
     const { umaUri } = await getVcUrifromResource(resources[0]);
     const { verifiable_credential_issuer } = await getUmaConfiguration(umaUri);
 
     // create and issue request
     const accessRequest = constructAccessRequest(webId, resources, 10);
-    const vcIssueEndpoint = `${verifiable_credential_issuer}/issue`; // TODO: don't hardcode issue endpoint
+    const { issuerService } = await getVcConfiguration(
+      verifiable_credential_issuer
+    );
 
-    const accessGrant = await this.fetch(vcIssueEndpoint, {
+    const accessGrant = await this.fetch(issuerService, {
       method: "POST",
       body: JSON.stringify({ credential: accessRequest }),
       mode: "cors",
@@ -51,6 +57,14 @@ export class UmaPod implements Pod {
         "Content-Type": "application/json; charset=utf-8",
       },
     });
+
+    if (!accessGrant.ok) {
+      throw Error(
+        `Could not set grant at VC server. Got [${
+          accessGrant.status
+        }]: ${await accessGrant.text()}`
+      );
+    }
   }
 }
 
@@ -165,5 +179,12 @@ function parseWwwAuthenticateHeader(header: string): {
 
 async function getUmaConfiguration(umaUri: string): Promise<UmaConfiguration> {
   const response = await fetch(`${umaUri}/.well-known/uma2-configuration`);
+  return await response.json();
+}
+
+async function getVcConfiguration(
+  vcUri: string
+): Promise<VerifiableCredentialApiConfiguration> {
+  const response = await fetch(`${vcUri}/.well-known/vc-configuration`);
   return await response.json();
 }
