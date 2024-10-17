@@ -133,10 +133,7 @@ export async function getVcUrifromResource(resourceUri: string): Promise<
   | undefined
 > {
   // TODO find more elegant way
-  let response: Response;
-  await fetch(resourceUri).then((r) => {
-    response = r;
-  });
+  const response = await fetch(resourceUri);
 
   return parseWwwAuthenticateHeader(response.headers.get("Www-Authenticate"));
 }
