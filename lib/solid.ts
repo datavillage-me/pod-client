@@ -3,6 +3,7 @@ import {
   getDefaultSession,
   handleIncomingRedirect,
   EVENTS,
+  ILoginInputOptions,
 } from "@inrupt/solid-client-authn-browser";
 import { Pod } from "./interfaces";
 import {
@@ -66,20 +67,10 @@ export class UmaPod implements Pod {
   }
 }
 
-export async function startLogin(
-  issuer: string,
-  callback: string
-): Promise<void> {
+export async function startLogin(options: ILoginInputOptions): Promise<void> {
   // Start the Login Process if not already logged in.
   if (!getDefaultSession().info.isLoggedIn) {
-    console.log("logging in with client id");
-    await login({
-      oidcIssuer: issuer,
-      redirectUrl: callback,
-      clientName: "My application",
-      clientId: "https://epc.datavillage.me/appid",
-      clientSecret: "SOME_SECRET",
-    });
+    await login(options);
   }
 }
 
