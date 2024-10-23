@@ -1,8 +1,6 @@
 import {
   login,
   getDefaultSession,
-  handleIncomingRedirect,
-  EVENTS,
   ILoginInputOptions,
 } from "@inrupt/solid-client-authn-browser";
 import { Pod } from "./interfaces";
@@ -74,13 +72,8 @@ export async function startLogin(options: ILoginInputOptions): Promise<void> {
 
 export async function getCurrentPod(): Promise<Pod | undefined> {
   const session = getDefaultSession();
-  const currentLocation = window.location;
 
-  session.events.on(EVENTS.SESSION_RESTORED, (url) => {
-    window.location = currentLocation;
-  });
-
-  const sessionInfo = await handleIncomingRedirect({
+  const sessionInfo = await session.handleIncomingRedirect({
     restorePreviousSession: true,
   });
 
