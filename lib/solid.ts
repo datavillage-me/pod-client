@@ -13,8 +13,6 @@ import {
 import { UmaConfiguration } from "@inrupt/solid-client-access-grants/dist/type/UmaConfiguration";
 import { getPodUrlAll } from "@inrupt/solid-client";
 
-export const SOLID = "solid";
-
 type FetchFn = typeof fetch;
 export type UmaPodConfig = {
   userWebId: string;
