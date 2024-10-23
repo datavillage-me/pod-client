@@ -1,6 +1,5 @@
 import { UmaPod } from "@datavillage-me/pod-client";
 import { usePod } from "../hooks/usePod";
-import { Button } from "antd";
 
 const requestAccess = async (pod: UmaPod) => {
   console.log("In request access");
@@ -24,7 +23,7 @@ export default function RequestAccess() {
   return (
     <>
       <p>Logged in as {pod.userWebId}</p>
-      <Button onClick={startRequest}>Request access</Button>
+      <button onClick={startRequest}>Request access</button>
     </>
   );
 }
