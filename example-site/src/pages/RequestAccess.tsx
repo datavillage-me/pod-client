@@ -7,7 +7,6 @@ const requestAccess = async (
   forWebId: string,
   forFile: string
 ) => {
-  console.log("In request access");
   const fileUrl = new URL(forFile, pod.podUrl).toString();
   await pod.grantAccess(forWebId, [fileUrl]);
 };

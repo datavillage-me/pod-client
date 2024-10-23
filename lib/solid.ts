@@ -10,6 +10,7 @@ import {
 } from "@inrupt/solid-client-vc";
 import { UmaConfiguration } from "@inrupt/solid-client-access-grants/dist/type/UmaConfiguration";
 import { getPodUrlAll } from "@inrupt/solid-client";
+import { AccessGrant } from "@inrupt/solid-client-access-grants";
 
 type FetchFn = typeof fetch;
 export type UmaPodConfig = {
@@ -29,7 +30,7 @@ export class UmaPod implements Pod {
     this.fetch = fetch;
   }
 
-  async grantAccess(webId: string, resources: string[]) {
+  async grantAccess(webId: string, resources: string[]): Promise<AccessGrant> {
     if (!resources.length) return;
     // assume same vc and uma
     // TODO: should we not keep the configuration of the servers in memory?
@@ -58,8 +59,7 @@ export class UmaPod implements Pod {
         }]: ${await accessGrant.text()}`
       );
     }
-    const grantModel = await accessGrant.json();
-    console.log("Made grant", grantModel);
+    return await accessGrant.json();
   }
 }
 
