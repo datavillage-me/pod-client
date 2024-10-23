@@ -26,7 +26,7 @@ export class UmaPod implements Pod {
   podUrl: string;
   fetch: FetchFn;
 
-  constructor(userWebId: string, podUrl: string, fetch: FetchFn) {
+  constructor(userWebId: string, podUrl: string | undefined, fetch: FetchFn) {
     console.log("Creating solid pod for", userWebId);
     this.userWebId = userWebId;
     this.podUrl = podUrl;
@@ -75,10 +75,10 @@ export async function startLogin(options: ILoginInputOptions): Promise<void> {
 }
 
 export async function getCurrentPod(): Promise<Pod | undefined> {
-  const unauth_session = getDefaultSession();
+  const session = getDefaultSession();
   const currentLocation = window.location;
 
-  unauth_session.events.on(EVENTS.SESSION_RESTORED, (url) => {
+  session.events.on(EVENTS.SESSION_RESTORED, (url) => {
     window.location = currentLocation;
   });
 
@@ -90,8 +90,8 @@ export async function getCurrentPod(): Promise<Pod | undefined> {
 
   return new UmaPod(
     sessionInfo.webId,
-    podUrls.length ? podUrls[0] : "",
-    unauth_session.fetch
+    podUrls.length ? podUrls[0] : undefined,
+    session.fetch
   );
 }
 
