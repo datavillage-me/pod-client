@@ -245,12 +245,13 @@ __metadata:
 
 "@datavillage-me/pod-client@file:../lib::locator=pod-client%40workspace%3A.":
   version: 0.1.0
-  resolution: "@datavillage-me/pod-client@file:../lib#../lib::hash=19d0de&locator=pod-client%40workspace%3A."
+  resolution: "@datavillage-me/pod-client@file:../lib#../lib::hash=6068fe&locator=pod-client%40workspace%3A."
   dependencies:
+    "@inrupt/solid-client": "npm:^2.1.2"
     "@inrupt/solid-client-access-grants": "npm:^3.1.0"
     "@inrupt/solid-client-authn-browser": "npm:^2.2.6"
     "@inrupt/solid-client-vc": "npm:^1.1.0"
-  checksum: 10c0/ea97da0f9aad54162c976d9a1417669a1d66bfce8edb78f19b2b09f2cdfa2b26630079d0c8dc87871e211354a33af66a947d7668a7c837df130f4f15afebacec
+  checksum: 10c0/4428fc975ab3587ed5369cddc2cea8b22f99e9d06ea3c405bd55b89b50b517b7c0bd60018837e3ecf6bbbcca8110ab1147c88e67bfb4dfd9bd896f34febaf540
   languageName: node
   linkType: hard
 
@@ -644,6 +645,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@inrupt/solid-client@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "@inrupt/solid-client@npm:2.1.2"
+  dependencies:
+    "@inrupt/solid-client-errors": "npm:^0.0.2"
+    "@rdfjs/dataset": "npm:^1.1.1"
+    buffer: "npm:^6.0.3"
+    fsevents: "npm:^2.3.3"
+    http-link-header: "npm:^1.1.1"
+    jsonld-context-parser: "npm:^3.0.0"
+    jsonld-streaming-parser: "npm:^4.0.1"
+    n3: "npm:^1.17.2"
+    uuid: "npm:^10.0.0"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  checksum: 10c0/82ec381a27ab87b74154eaff79f626ee136a7aeb28836ea9bb7c480c8b81cf68bd61a092f5970844634a1b496e6ded1a7e0fc37cd2566c63d4fbe961929ae4b4
+  languageName: node
+  linkType: hard
+
 "@isaacs/cliui@npm:^8.0.2":
   version: 8.0.2
   resolution: "@isaacs/cliui@npm:8.0.2"
@@ -1030,6 +1051,16 @@ __metadata:
     "@types/node": "npm:*"
     safe-buffer: "npm:~5.1.1"
   checksum: 10c0/789e0948a8fd2f2cbf880a0f8c95601ac2fd8782a5a8fe653f68fad7fc3a74f44e8559484e331c1ff5d5b00fa467bec97557bb683aa833a3b29a69506f7aee59
+  languageName: node
+  linkType: hard
+
+"@types/readable-stream@npm:^4.0.0":
+  version: 4.0.16
+  resolution: "@types/readable-stream@npm:4.0.16"
+  dependencies:
+    "@types/node": "npm:*"
+    safe-buffer: "npm:~5.1.1"
+  checksum: 10c0/bbea3b545b9153bfd8358ab357de4007a634d6e2b7f82b054bfdbe91d6c01365d50f4db729d06ed456f6deee63703a18f60c1952bd3faf702ee1499e9facef5a
   languageName: node
   linkType: hard
 
@@ -2377,6 +2408,24 @@ __metadata:
     rdf-data-factory: "npm:^1.1.0"
     readable-stream: "npm:^4.0.0"
   checksum: 10c0/6f36ee9a26f343ea8202ca1acc74b0d8a61b322669fbc5970a0e0a4d47108a2aa40ffa4470fc8db1f9426ff113bbcd3b760da5decce67a2fd110bc6d9eeb444b
+  languageName: node
+  linkType: hard
+
+"jsonld-streaming-parser@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "jsonld-streaming-parser@npm:4.0.1"
+  dependencies:
+    "@bergos/jsonparse": "npm:^1.4.0"
+    "@rdfjs/types": "npm:*"
+    "@types/http-link-header": "npm:^1.0.1"
+    "@types/readable-stream": "npm:^4.0.0"
+    buffer: "npm:^6.0.3"
+    canonicalize: "npm:^1.0.1"
+    http-link-header: "npm:^1.0.2"
+    jsonld-context-parser: "npm:^3.0.0"
+    rdf-data-factory: "npm:^1.1.0"
+    readable-stream: "npm:^4.0.0"
+  checksum: 10c0/815f2395f82bddd2a13b15117d8822b0a0dee200415f7e5e8fff0e57f0ea9f012ea27cc1ce3310e00e1335c92360d962ebb49b24298510b9f18f08c57202f3bc
   languageName: node
   linkType: hard
 

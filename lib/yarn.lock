@@ -227,6 +227,22 @@
   optionalDependencies:
     fsevents "^2.3.3"
 
+"@inrupt/solid-client@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@inrupt/solid-client/-/solid-client-2.1.2.tgz#52d6821704d3d5f96a5b265dd23f5988a0857ee7"
+  integrity sha512-JCqWe2Kl0fVjBpd+Ntdjrd1rhv4v9NkiQI/PXE0wOhfmj/zNd45/qu8nGbpojfnUqopmBZSN2BU4dUpGy795nQ==
+  dependencies:
+    "@inrupt/solid-client-errors" "^0.0.2"
+    "@rdfjs/dataset" "^1.1.1"
+    buffer "^6.0.3"
+    http-link-header "^1.1.1"
+    jsonld-context-parser "^3.0.0"
+    jsonld-streaming-parser "^4.0.1"
+    n3 "^1.17.2"
+    uuid "^10.0.0"
+  optionalDependencies:
+    fsevents "^2.3.3"
+
 "@isaacs/cliui@^8.0.2":
   version "8.0.2"
   resolved "https://registry.yarnpkg.com/@isaacs/cliui/-/cliui-8.0.2.tgz#b37667b7bc181c168782259bab42474fbf52b550"
@@ -414,6 +430,14 @@
   version "2.3.15"
   resolved "https://registry.yarnpkg.com/@types/readable-stream/-/readable-stream-2.3.15.tgz#3d79c9ceb1b6a57d5f6e6976f489b9b5384321ae"
   integrity sha512-oM5JSKQCcICF1wvGgmecmHldZ48OZamtMxcGGVICOJA8o8cahXC1zEVAif8iwoc5j8etxFaRFnf095+CDsuoFQ==
+  dependencies:
+    "@types/node" "*"
+    safe-buffer "~5.1.1"
+
+"@types/readable-stream@^4.0.0":
+  version "4.0.16"
+  resolved "https://registry.yarnpkg.com/@types/readable-stream/-/readable-stream-4.0.16.tgz#491ea991b327b1d62d4092fb22893e0d7e30c8f1"
+  integrity sha512-Fvp+8OcU8PyV90KTk5tR/rI8OjD3MP5NUow5rjOsZo+9zxf4p4soJtK9j4V6yeG30TH6rZxqRaP4JLa8lNNTNQ==
   dependencies:
     "@types/node" "*"
     safe-buffer "~5.1.1"
@@ -845,6 +869,22 @@ jsonld-streaming-parser@^3.3.0:
     canonicalize "^1.0.1"
     http-link-header "^1.0.2"
     jsonld-context-parser "^2.4.0"
+    rdf-data-factory "^1.1.0"
+    readable-stream "^4.0.0"
+
+jsonld-streaming-parser@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/jsonld-streaming-parser/-/jsonld-streaming-parser-4.0.1.tgz#41212df7ef21df1f970d09ef989261fbb566194b"
+  integrity sha512-6M4y9YGgADk3nXJebbRrxEdMVBJ9bnz+peAvjTXUievopqaE8sg/qml/I6Sp1ln7rpOKffsNZWSre6B7N76szw==
+  dependencies:
+    "@bergos/jsonparse" "^1.4.0"
+    "@rdfjs/types" "*"
+    "@types/http-link-header" "^1.0.1"
+    "@types/readable-stream" "^4.0.0"
+    buffer "^6.0.3"
+    canonicalize "^1.0.1"
+    http-link-header "^1.0.2"
+    jsonld-context-parser "^3.0.0"
     rdf-data-factory "^1.1.0"
     readable-stream "^4.0.0"
 

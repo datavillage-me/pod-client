@@ -23,6 +23,7 @@ export default function RequestAccess() {
   return (
     <>
       <p>Logged in as {pod.userWebId}</p>
+      <p>Pod located at {pod.podUrl}</p>
       <button onClick={startRequest}>Request access</button>
     </>
   );

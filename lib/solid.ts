@@ -10,6 +10,7 @@ import {
   VerifiableCredentialApiConfiguration,
 } from "@inrupt/solid-client-vc";
 import { UmaConfiguration } from "@inrupt/solid-client-access-grants/dist/type/UmaConfiguration";
+import { getPodUrlAll } from "@inrupt/solid-client";
 
 export const SOLID = "solid";
 
@@ -21,11 +22,13 @@ export type UmaPodConfig = {
 
 export class UmaPod implements Pod {
   userWebId: string;
+  podUrl: string;
   fetch: FetchFn;
 
-  constructor(userWebId: string, fetch: FetchFn) {
+  constructor(userWebId: string, podUrl: string, fetch: FetchFn) {
     console.log("Creating solid pod for", userWebId);
     this.userWebId = userWebId;
+    this.podUrl = podUrl;
     this.fetch = fetch;
   }
 
@@ -92,7 +95,13 @@ export async function getCurrentPod(): Promise<Pod | undefined> {
     restorePreviousSession: true,
   });
 
-  return new UmaPod(sessionInfo.webId, unauth_session.fetch);
+  const podUrls = await getPodUrlAll(sessionInfo.webId);
+
+  return new UmaPod(
+    sessionInfo.webId,
+    podUrls.length ? podUrls[0] : "",
+    unauth_session.fetch
+  );
 }
 
 // TODO: don't use deprecated type
