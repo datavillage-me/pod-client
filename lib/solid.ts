@@ -58,6 +58,8 @@ export class UmaPod implements Pod {
         }]: ${await accessGrant.text()}`
       );
     }
+    const grantModel = await accessGrant.json();
+    console.log("Made grant", grantModel);
   }
 }
 
