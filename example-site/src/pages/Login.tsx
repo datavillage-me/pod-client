@@ -1,9 +1,9 @@
 import { SOLID, startLogin } from "@datavillage-me/pod-client";
 
 function Login() {
-  const issuer = "https://idp.dev.jouw.id";
-  const callbackUrl = "http://localhost:5173/access";
-  const clientName = "DV Test Client";
+  const issuer = import.meta.env.VITE_SOLID_IDP;
+  const callbackUrl = import.meta.env.VITE_LOGIN_CALLBACK;
+  const clientName = import.meta.env.VITE_CLIENT_NAME;
   startLogin({
     oidcIssuer: issuer,
     redirectUrl: callbackUrl,
