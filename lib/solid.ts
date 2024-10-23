@@ -70,7 +70,7 @@ export async function startLogin(options: ILoginInputOptions): Promise<void> {
   }
 }
 
-export async function getCurrentPod(): Promise<Pod | undefined> {
+export async function getCurrentPod(): Promise<Pod> {
   const session = getDefaultSession();
 
   const sessionInfo = await session.handleIncomingRedirect({
