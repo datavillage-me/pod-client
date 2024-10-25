@@ -24,3 +24,5 @@ dist-ssr
 .yarn
 example-site/.yarn
 scrapbook/
+
+.env
