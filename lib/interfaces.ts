@@ -1,6 +1,6 @@
 /*
-* A pod is a thing we can read and write to.
-*/
+ * A pod is a thing we can read and write to.
+ */
 export interface Pod {
-
+  // TODO: add getId function
 }
