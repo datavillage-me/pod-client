@@ -11,7 +11,7 @@ on:
 jobs:
   check-version:
     outputs:
-      package-version: ${{ steps.package-version.outputs.current-version}}
+      status: ${{ steps.package-version.outputs.current-version == github.ref_name }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,7 +23,7 @@ jobs:
           path: lib
 
   build:
-    if: needs.check-version.outputs.package-version == github.ref_name
+    if: needs.check-version.outputs.status == 'success'
     defaults:
       run:
         working-directory: lib
