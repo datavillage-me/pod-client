@@ -9,7 +9,21 @@ on:
   #   types: [published]
 
 jobs:
+  check-version:
+    outputs:
+      package-version: ${{ steps.package-version.outputs.current-version}}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Setup .npmrc file to publish to GitHub Packages
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+        with:
+          path: lib
+
   build:
+    if: needs.check-version.outputs.package-version == github.ref_name
     defaults:
       run:
         working-directory: lib
@@ -23,8 +37,9 @@ jobs:
       - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@v1.3.1
-      - if: ${{ steps.package-version.outputs.current-version == github.ref_name }}
-        uses: actions/setup-node@v4
+        with:
+          path: lib
+      - uses: actions/setup-node@v4
         with:
           node-version: "20.x"
           registry-url: "https://npm.pkg.github.com"
