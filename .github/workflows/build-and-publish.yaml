@@ -19,12 +19,12 @@ jobs:
           registry-url: "https://npm.pkg.github.com"
           # Defaults to the user or organization that owns the workflow file
           scope: "@datavillage-me"
-      - run: npm ci
+      - run: yarn install --frozen-lockfile
       # - uses: qoomon/actions--access-token@v3
       #   id: access-token
       #   with:
       #     permissions: |
       #       packages: write
-      - run: npm publish
+      - run: yarn npm publish
         # env:
         #   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
