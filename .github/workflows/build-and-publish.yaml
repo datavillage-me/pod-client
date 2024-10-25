@@ -6,6 +6,9 @@ on:
   #   types: [published]
 jobs:
   build:
+    defaults:
+      run:
+        working-directory: lib
     runs-on: ubuntu-latest
     permissions:
       contents: read
