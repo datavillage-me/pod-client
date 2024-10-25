@@ -24,7 +24,7 @@ jobs:
         run: echo "Wrong version in package.json. Got ${{steps.package-version.outputs.current-version }} but expected ${{github.ref_name}}"; exit 1
 
   build:
-    if: needs.check-version.outputs.status == 'success'
+    needs: check-version
     defaults:
       run:
         working-directory: lib
