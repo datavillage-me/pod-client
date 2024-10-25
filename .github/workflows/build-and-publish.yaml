@@ -10,8 +10,6 @@ on:
 
 jobs:
   check-version:
-    outputs:
-      status: ${{ steps.package-version.outputs.current-version == github.ref_name }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,6 +19,9 @@ jobs:
         uses: martinbeentjes/npm-get-version-action@v1.3.1
         with:
           path: lib
+      - name: Fail if different version
+        if: ${{ steps.package-version.outputs.current-version != github.ref_name }}
+        run: exit 1
 
   build:
     if: needs.check-version.outputs.status == 'success'
