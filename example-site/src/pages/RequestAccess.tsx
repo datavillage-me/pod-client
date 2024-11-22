@@ -42,7 +42,9 @@ export default function RequestAccess() {
   };
 
   const revokeSelectedAccessGrant = async () => {
-    console.log("Revoking", selectedAccessGrant);
+    if (selectedAccessGrant && selectedAccessGrant.length) {
+      await pod.revokeAccessGrant(selectedAccessGrant);
+    }
   };
 
   return (
