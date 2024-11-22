@@ -71,7 +71,14 @@ export class UmaPod implements Pod {
     return await accessGrant.json();
   }
 
-  async getAccessGrantsForWebId(webId: string): Promise<AccessGrant[]> {
+  async getAccessGrantsForWebId(
+    webId: string
+  ): Promise<{
+    "@context": string[];
+    type: "VerifiablePresentation";
+    holder: string;
+    verifiableCredential: AccessGrant[];
+  }> {
     const { umaUri } = await getUmaUrifromResource(this.podUrl);
     const { verifiable_credential_issuer } = await getUmaConfiguration(umaUri);
     const { derivationService } = await getVcConfiguration(
