@@ -71,9 +71,7 @@ export class UmaPod implements Pod {
     return await accessGrant.json();
   }
 
-  async getAccessGrantsForWebId(
-    webId: string
-  ): Promise<{
+  async getAccessGrantsForWebId(webId: string): Promise<{
     "@context": string[];
     type: "VerifiablePresentation";
     holder: string;
@@ -103,6 +101,40 @@ export class UmaPod implements Pod {
     }
 
     return await accessGrants.json();
+  }
+
+  async revokeAccessGrant(accessGrantUri: string, vc_uri?: string) {
+    if (!vc_uri) {
+      // docs say that access grant uri is of the form https://vc.<ESS DOMAIN>/vc/<value>
+      const sliceIndex = accessGrantUri.indexOf("/vc/");
+      if (sliceIndex == -1) {
+        throw Error(
+          `Could not derive vc uri from access grant uri ${accessGrantUri}`
+        );
+      }
+      vc_uri = accessGrantUri.slice(0, sliceIndex);
+    }
+    const revokeGrantPayload = {
+      credentialId: accessGrantUri,
+      credentialStatus: [{ type: "RevocationList2020Status", status: 1 }],
+    };
+    const { statusService } = await getVcConfiguration(vc_uri);
+
+    const response = await this.fetch(statusService, {
+      method: "POST",
+      body: JSON.stringify(revokeGrantPayload),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw Error(
+        `Could not revoke access grant. Got [${
+          response.status
+        }]: ${await response.text()}`
+      );
+    }
   }
 }
 
