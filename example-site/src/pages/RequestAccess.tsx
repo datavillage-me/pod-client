@@ -11,6 +11,13 @@ const requestAccess = async (
   await pod.grantAccess(forWebId, [fileUrl]);
 };
 
+const getAccessGrants = async (
+  pod: UmaPod,
+  forWebId: string
+): Promise<object> => {
+  return await pod.getAccessGrantsForWebId(forWebId);
+};
+
 export default function RequestAccess() {
   const pod = usePod() as UmaPod;
   const [forWebId, setForWebId] = useState<string>();
@@ -23,6 +30,13 @@ export default function RequestAccess() {
   const startRequest = async () => {
     if (forWebId && forFile) {
       await requestAccess(pod, forWebId, forFile);
+    }
+  };
+
+  const getGrants = async () => {
+    if (forWebId && forWebId.length) {
+      const grants = await getAccessGrants(pod, forWebId);
+      console.log("Got grants", grants);
     }
   };
 
@@ -47,6 +61,7 @@ export default function RequestAccess() {
       <input onChange={(e) => updateForFile(e.target.value)} />
       <br />
       <button onClick={startRequest}>Request access</button>
+      <button onClick={getGrants}>Get all access requests for webid</button>
     </>
   );
 }
