@@ -18,6 +18,15 @@ export type UmaPodConfig = {
   applicationIdToken: string;
 };
 
+export type AccessGrantFilter = {
+  credentialSubject: {
+    providedConsent?: {
+      isProvidedTo?: string;
+      forPersonalData?: string | string[];
+    };
+  };
+};
+
 export class UmaPod implements Pod {
   userWebId: string;
   podUrl: string;
@@ -34,11 +43,11 @@ export class UmaPod implements Pod {
     if (!resources.length) return;
     // assume same vc and uma
     // TODO: should we not keep the configuration of the servers in memory?
-    const { umaUri } = await getVcUrifromResource(resources[0]);
+    const { umaUri } = await getUmaUrifromResource(resources[0]);
     const { verifiable_credential_issuer } = await getUmaConfiguration(umaUri);
 
     // create and issue request
-    const accessRequest = constructAccessRequest(webId, resources, 10);
+    const accessRequest = constructAccessGrant(webId, resources, 10);
     const { issuerService } = await getVcConfiguration(
       verifiable_credential_issuer
     );
@@ -60,6 +69,33 @@ export class UmaPod implements Pod {
       );
     }
     return await accessGrant.json();
+  }
+
+  async getAccessGrantsForWebId(webId: string): Promise<AccessGrant[]> {
+    const { umaUri } = await getUmaUrifromResource(this.podUrl);
+    const { verifiable_credential_issuer } = await getUmaConfiguration(umaUri);
+    const { derivationService } = await getVcConfiguration(
+      verifiable_credential_issuer
+    );
+
+    const accessGrantFilter = createAccessGrantFilter(webId);
+    const accessGrants = await this.fetch(derivationService, {
+      body: JSON.stringify(accessGrantFilter),
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!accessGrants.ok) {
+      throw Error(
+        `Could not derive access grants. Got [${
+          accessGrants.status
+        }]: ${await accessGrants.text()}`
+      );
+    }
+
+    return await accessGrants.json();
   }
 }
 
@@ -87,7 +123,7 @@ export async function getCurrentPod(): Promise<Pod> {
 }
 
 // TODO: don't use deprecated type
-export function constructAccessRequest(
+export function constructAccessGrant(
   webId: string,
   resources: string[],
   duration_days: number
@@ -118,7 +154,7 @@ export function constructAccessRequest(
   };
 }
 
-export async function getVcUrifromResource(resourceUri: string): Promise<
+export async function getUmaUrifromResource(resourceUri: string): Promise<
   | {
       umaUri: string;
       permissionTicket: string;
@@ -158,4 +194,20 @@ async function getVcConfiguration(
 ): Promise<VerifiableCredentialApiConfiguration> {
   const response = await fetch(`${vcUri}/.well-known/vc-configuration`);
   return await response.json();
+}
+
+function createAccessGrantFilter(
+  webId?: string,
+  resource_uri?: string | string[]
+): { verifiableCredential: AccessGrantFilter } {
+  return {
+    verifiableCredential: {
+      credentialSubject: {
+        providedConsent: {
+          isProvidedTo: webId,
+          forPersonalData: resource_uri,
+        },
+      },
+    },
+  };
 }
