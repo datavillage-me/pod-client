@@ -8,13 +8,21 @@ const requestAccess = async (
   forFile: string
 ) => {
   const fileUrl = new URL(forFile, pod.podUrl).toString();
-  await pod.grantAccess(forWebId, [fileUrl]);
+  await pod.grantAccess(forWebId, [fileUrl], 10);
+};
+
+const getAccessGrants = async (
+  pod: UmaPod,
+  forWebId: string
+): Promise<object[]> => {
+  return (await pod.getAccessGrantsForWebId(forWebId)).verifiableCredential;
 };
 
 export default function RequestAccess() {
   const pod = usePod() as UmaPod;
   const [forWebId, setForWebId] = useState<string>();
   const [forFile, setForFile] = useState<string>();
+  const [selectedAccessGrant, setSelectedAccessGrant] = useState<string>();
 
   if (!pod) {
     return <>Not logged in</>;
@@ -26,12 +34,17 @@ export default function RequestAccess() {
     }
   };
 
-  const updateForWebId = (value: string) => {
-    setForWebId(value);
+  const getGrants = async () => {
+    if (forWebId && forWebId.length) {
+      const grants = await getAccessGrants(pod, forWebId);
+      console.log("Got grants", grants);
+    }
   };
 
-  const updateForFile = (value: string) => {
-    setForFile(value);
+  const revokeSelectedAccessGrant = async () => {
+    if (selectedAccessGrant && selectedAccessGrant.length) {
+      await pod.revokeAccessGrant(selectedAccessGrant);
+    }
   };
 
   return (
@@ -40,13 +53,18 @@ export default function RequestAccess() {
       <p>Pod located at {pod.podUrl}</p>
       For webId
       <br />
-      <input onChange={(e) => updateForWebId(e.target.value)}></input>
+      <input onChange={(e) => setForWebId(e.target.value)}></input>
       <br />
       For file
       <br />
-      <input onChange={(e) => updateForFile(e.target.value)} />
+      <input onChange={(e) => setForFile(e.target.value)} />
       <br />
       <button onClick={startRequest}>Request access</button>
+      <button onClick={getGrants}>Get all access requests for webid</button>
+      <br />
+      Access Grant URI
+      <input onChange={(e) => setSelectedAccessGrant(e.target.value)} />
+      <button onClick={revokeSelectedAccessGrant}>Revoke access grant</button>
     </>
   );
 }
