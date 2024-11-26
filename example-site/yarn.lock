@@ -245,13 +245,13 @@ __metadata:
 
 "@datavillage-me/pod-client@file:../lib::locator=pod-client%40workspace%3A.":
   version: 0.1.3
-  resolution: "@datavillage-me/pod-client@file:../lib#../lib::hash=070017&locator=pod-client%40workspace%3A."
+  resolution: "@datavillage-me/pod-client@file:../lib#../lib::hash=a036c7&locator=pod-client%40workspace%3A."
   dependencies:
     "@inrupt/solid-client": "npm:^2.1.2"
     "@inrupt/solid-client-access-grants": "npm:^3.1.0"
     "@inrupt/solid-client-authn-browser": "npm:^2.2.6"
     "@inrupt/solid-client-vc": "npm:^1.1.0"
-  checksum: 10c0/e1e740d6402a6fbe667ea906a5b732a356e703c38bc25bc036d6fdebb5528f45180b1d600e2706963c90dacca019b76e05490d7040c37e2bbb774ebd1dd1907f
+  checksum: 10c0/27c882039e6672f55f55582600953e6b4e99c129fba7130c4e20aa1b0782d3b743246a53819578d660738913eca3ab9bd2ab0f4fce11d17e1081fa4866e99905
   languageName: node
   linkType: hard
 

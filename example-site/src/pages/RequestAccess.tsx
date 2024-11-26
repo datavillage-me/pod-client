@@ -8,7 +8,7 @@ const requestAccess = async (
   forFile: string
 ) => {
   const fileUrl = new URL(forFile, pod.podUrl).toString();
-  await pod.grantAccess(forWebId, [fileUrl]);
+  await pod.grantAccess(forWebId, [fileUrl], 10);
 };
 
 const getAccessGrants = async (
