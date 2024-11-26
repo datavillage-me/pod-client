@@ -13,20 +13,30 @@ import { getPodUrlAll } from "@inrupt/solid-client";
 import { AccessGrant } from "@inrupt/solid-client-access-grants";
 
 type FetchFn = typeof fetch;
-export type UmaPodConfig = {
-  userWebId: string;
-  applicationIdToken: string;
-};
 
+/**
+ * The structure of a query to find access grants using the /derive endpoint of the VC
+ */
 export type AccessGrantFilter = {
   credentialSubject: {
     providedConsent?: {
+      /**
+       * the webid access is granted to
+       */
       isProvidedTo?: string;
+
+      /**
+       * URI of resource(s) access is granted for
+       */
       forPersonalData?: string | string[];
     };
   };
 };
 
+/**
+ * Abstracts access to resources in a Solid POD using the ACP protocol.
+ * Do not create this yourself but call the `getCurrentPod` method.
+ */
 export class UmaPod implements Pod {
   userWebId: string;
   podUrl: string;
@@ -39,6 +49,13 @@ export class UmaPod implements Pod {
     this.fetch = fetch;
   }
 
+  /**
+   * Grants access to resources for a webid by creating an access grant and posting it to the VC
+   * @param webId the webId that is granted access
+   * @param resources the URIs of the resources access is granted to
+   * @param duration_days the number of days the access grant should be valid
+   * @returns the created access grant as received from the VC in JSON-LD format
+   */
   async grantAccess(
     webId: string,
     resources: string[],
@@ -75,6 +92,11 @@ export class UmaPod implements Pod {
     return await accessGrant.json();
   }
 
+  /**
+   * Derives all access grants the current user created for a given webid
+   * @param webId the returned grants grant access to this webid
+   * @returns the list of grants and some metadata in JSON-LD format
+   */
   async getAccessGrantsForWebId(webId: string): Promise<{
     "@context": string[];
     type: "VerifiablePresentation";
@@ -107,6 +129,11 @@ export class UmaPod implements Pod {
     return await accessGrants.json();
   }
 
+  /**
+   * Revokes an access grant so that it cannot be used to access resources
+   * @param accessGrantUri the uri of the access grant that should be revoked. This is the same as the id in the AccessGrant type
+   * @param vc_uri optional parameter indicating the uri of the VC. Is derived from accessGrantUri if not passed
+   */
   async revokeAccessGrant(accessGrantUri: string, vc_uri?: string) {
     if (!vc_uri) {
       // docs say that access grant uri is of the form https://vc.<ESS DOMAIN>/vc/<value>
@@ -141,7 +168,10 @@ export class UmaPod implements Pod {
     }
   }
 }
-
+/**
+ * Initiates the login process by redirecting the user to the IDP
+ * @param options the options to control the login process
+ */
 export async function startLogin(options: ILoginInputOptions): Promise<void> {
   // Start the Login Process if not already logged in.
   if (!getDefaultSession().info.isLoggedIn) {
@@ -149,6 +179,10 @@ export async function startLogin(options: ILoginInputOptions): Promise<void> {
   }
 }
 
+/**
+ * Get the Pod of the current user
+ * @returns an object implementing the Pod interface
+ */
 export async function getCurrentPod(): Promise<Pod> {
   const session = getDefaultSession();
 
@@ -166,6 +200,13 @@ export async function getCurrentPod(): Promise<Pod> {
 }
 
 // TODO: don't use deprecated type JsonLd
+/**
+ * Constructs an access grant in JSON-LD format to send to the VC
+ * @param webId the webId that is granted access
+ * @param resources the URIs of the resources access is granted to
+ * @param duration_days the number of days the access grant should be valid
+ * @returns the access grant in JSON-LD format
+ */
 export function constructAccessGrant(
   webId: string,
   resources: string[],
@@ -197,6 +238,11 @@ export function constructAccessGrant(
   };
 }
 
+/**
+ * Derives the UMA uri of a resource by doing an authenticated call and parsing the WWW-Authenticate header
+ * @param resourceUri the URI of the resource for which the UMA uri should be found
+ * @returns the URI of the UMA protecting the given resource
+ */
 export async function getUmaUrifromResource(resourceUri: string): Promise<
   | {
       umaUri: string;
