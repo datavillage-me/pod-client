@@ -39,7 +39,11 @@ export class UmaPod implements Pod {
     this.fetch = fetch;
   }
 
-  async grantAccess(webId: string, resources: string[]): Promise<AccessGrant> {
+  async grantAccess(
+    webId: string,
+    resources: string[],
+    duration_days: number
+  ): Promise<AccessGrant> {
     if (!resources.length) return;
     // assume same vc and uma
     // TODO: should we not keep the configuration of the servers in memory?
@@ -47,7 +51,7 @@ export class UmaPod implements Pod {
     const { verifiable_credential_issuer } = await getUmaConfiguration(umaUri);
 
     // create and issue request
-    const accessRequest = constructAccessGrant(webId, resources, 10);
+    const accessRequest = constructAccessGrant(webId, resources, duration_days);
     const { issuerService } = await getVcConfiguration(
       verifiable_credential_issuer
     );
@@ -161,7 +165,7 @@ export async function getCurrentPod(): Promise<Pod> {
   );
 }
 
-// TODO: don't use deprecated type
+// TODO: don't use deprecated type JsonLd
 export function constructAccessGrant(
   webId: string,
   resources: string[],
