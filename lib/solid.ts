@@ -186,14 +186,14 @@ export async function startLogin(options: ILoginInputOptions): Promise<void> {
 export async function getCurrentPod(): Promise<Pod> {
   const session = getDefaultSession();
 
-  const sessionInfo = await session.handleIncomingRedirect({
+  await session.handleIncomingRedirect({
     restorePreviousSession: true,
   });
 
-  const podUrls = await getPodUrlAll(sessionInfo.webId);
+  const podUrls = await getPodUrlAll(session.info.webId);
 
   return new UmaPod(
-    sessionInfo.webId,
+    session.info.webId,
     podUrls.length ? podUrls[0] : undefined,
     session.fetch
   );
