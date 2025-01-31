@@ -59,7 +59,7 @@ export default function RequestAccess() {
       <br />
       <input onChange={(e) => setForFile(e.target.value)} />
       <br />
-      <button onClick={startRequest}>Request access</button>
+      <button onClick={startRequest}>Grant access</button>
       <button onClick={getGrants}>Get all access requests for webid</button>
       <br />
       Access Grant URI
