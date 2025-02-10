@@ -243,15 +243,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@datavillage-me/pod-client@file:../lib::locator=pod-client%40workspace%3A.":
+"@datavillage-me/pod-client@npm:0.1.4":
   version: 0.1.4
-  resolution: "@datavillage-me/pod-client@file:../lib#../lib::hash=530d37&locator=pod-client%40workspace%3A."
+  resolution: "@datavillage-me/pod-client@npm:0.1.4::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40datavillage-me%2Fpod-client%2F0.1.4%2F03b839c9eb57d02490083e6e781dff53cab01f61"
   dependencies:
     "@inrupt/solid-client": "npm:^2.1.2"
     "@inrupt/solid-client-access-grants": "npm:^3.1.0"
     "@inrupt/solid-client-authn-browser": "npm:^2.2.6"
     "@inrupt/solid-client-vc": "npm:^1.1.0"
-  checksum: 10c0/3b98ca1bd3c647a8bdecf7142b568e1cccf2d8fe0f26cc7a129cc26d226560016125eb357e9efe4cc757a0ef578a6216d9940bfa74daeda1954c81e961d2b58d
+  checksum: 10c0/8074350da6875511a966dd032d40520aad20332f33724cb348efdeb93d25b3e3c08ea564cc65fee0787044f3506b44a7c3f34bc72a37b363fb724131ef4f0479
   languageName: node
   linkType: hard
 
@@ -523,15 +523,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@inrupt/oidc-client-ext@npm:^2.2.6":
-  version: 2.2.6
-  resolution: "@inrupt/oidc-client-ext@npm:2.2.6"
+"@inrupt/oidc-client-ext@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "@inrupt/oidc-client-ext@npm:2.3.0"
   dependencies:
     "@inrupt/oidc-client": "npm:^1.11.6"
-    "@inrupt/solid-client-authn-core": "npm:^2.2.6"
+    "@inrupt/solid-client-authn-core": "npm:^2.3.0"
     jose: "npm:^5.1.3"
-    uuid: "npm:^10.0.0"
-  checksum: 10c0/5bc04a231a46582ef53099dd8c4ec7eb6d1aedac1d1b5c970a3e4fa32740fea87dc5789b354b9d08ff8b4ddf0a0623c16d95138e42c2f86764ce5c9c4e8089ef
+    uuid: "npm:^11.0.3"
+  checksum: 10c0/0364074cc58ea5f9b26e4ab94d34c2508bcd0cffc0a2d75a55d62e19f977575b80b730df479ed8f942194a0bc4670743a80666fcac9f495750f552aeebe5e657
   languageName: node
   linkType: hard
 
@@ -549,11 +549,12 @@ __metadata:
   linkType: hard
 
 "@inrupt/solid-client-access-grants@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "@inrupt/solid-client-access-grants@npm:3.1.0"
+  version: 3.2.1
+  resolution: "@inrupt/solid-client-access-grants@npm:3.2.1"
   dependencies:
     "@inrupt/solid-client": "npm:^2.0.0"
-    "@inrupt/solid-client-vc": "npm:^1.0.3"
+    "@inrupt/solid-client-errors": "npm:^0.0.2"
+    "@inrupt/solid-client-vc": "npm:^1.2.0"
     "@types/rdfjs__dataset": "npm:^2.0.7"
     auth-header: "npm:^1.0.0"
     base64url: "npm:^3.0.1"
@@ -563,31 +564,31 @@ __metadata:
   dependenciesMeta:
     fsevents:
       optional: true
-  checksum: 10c0/75b3026342fc485e8b52de8182f2ebe6b7b493b3e3ec2a4b7aa3458d7e147f6038b9a9328e80f52f3a406ae0e5be923d8fca8dfba196923772f009c1e7352101
+  checksum: 10c0/af1b1b0b7a03df9c9a981f110f5e5f19707a9a2523423d0b45c41fc2fa3751e26eb51e4da42029bb60df9c0841d9ceb9cdcae5755bc5e639a4bf705afe3ed099
   languageName: node
   linkType: hard
 
 "@inrupt/solid-client-authn-browser@npm:^2.2.6":
-  version: 2.2.6
-  resolution: "@inrupt/solid-client-authn-browser@npm:2.2.6"
+  version: 2.3.0
+  resolution: "@inrupt/solid-client-authn-browser@npm:2.3.0"
   dependencies:
-    "@inrupt/oidc-client-ext": "npm:^2.2.6"
-    "@inrupt/solid-client-authn-core": "npm:^2.2.6"
+    "@inrupt/oidc-client-ext": "npm:^2.3.0"
+    "@inrupt/solid-client-authn-core": "npm:^2.3.0"
     events: "npm:^3.3.0"
     jose: "npm:^5.1.3"
-    uuid: "npm:^10.0.0"
-  checksum: 10c0/a89776d946ed7bba52653398719d131cf9c71490f4dfade762e1b8a2a874bdeba388c18e766db4d14d47eb623727ffa6d3b322c5ed58e23f464122f1d27865b2
+    uuid: "npm:^11.0.3"
+  checksum: 10c0/9f5c8bc89d1e19a9bd41354181aee77f2405dcc59e6b9407fc4e501771cab7ad4439c81d9b9184ecc79d5996fdf56992665551db7a679e8d6ed3bfc4b62f609c
   languageName: node
   linkType: hard
 
-"@inrupt/solid-client-authn-core@npm:^2.2.6":
-  version: 2.2.6
-  resolution: "@inrupt/solid-client-authn-core@npm:2.2.6"
+"@inrupt/solid-client-authn-core@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "@inrupt/solid-client-authn-core@npm:2.3.0"
   dependencies:
     events: "npm:^3.3.0"
     jose: "npm:^5.1.3"
-    uuid: "npm:^10.0.0"
-  checksum: 10c0/d89f7466178751605accdea6bad7d630ae93353a6adc1686725e18f7e3a9165cc476f0ae4ed806e3ddff6f945d38df6cbd8f45393438b1e455700223e0eacb77
+    uuid: "npm:^11.0.3"
+  checksum: 10c0/aee61079033631c3599eb72067f232d982c0c45f550a011d004d603aeaab4d7646514fef048ee837f6a611d2791baf6dbd039737497e91e2dd20d7794fe37795
   languageName: node
   linkType: hard
 
@@ -605,23 +606,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@inrupt/solid-client-vc@npm:^1.0.3, @inrupt/solid-client-vc@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@inrupt/solid-client-vc@npm:1.1.0"
+"@inrupt/solid-client-vc@npm:^1.1.0, @inrupt/solid-client-vc@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@inrupt/solid-client-vc@npm:1.2.0"
   dependencies:
     "@inrupt/solid-client": "npm:^2.0.0"
     "@inrupt/solid-client-errors": "npm:^0.0.2"
     event-emitter-promisify: "npm:^1.1.0"
     fsevents: "npm:^2.3.3"
     jsonld-context-parser: "npm:^3.0.0"
-    jsonld-streaming-parser: "npm:^3.3.0"
+    jsonld-streaming-parser: "npm:^4.0.1"
     md5: "npm:^2.3.0"
     n3: "npm:^1.21.0"
     rdf-namespaces: "npm:^1.12.0"
   dependenciesMeta:
     fsevents:
       optional: true
-  checksum: 10c0/38e7812c433a5d897f9ad1bd1e581777f8e9fe9012617f962710ca526d6d87e0b6c8615dbf530c729fa9ad5f99b75f9f432e7283e42fce5d74a996330f4d256c
+  checksum: 10c0/b0e0ba654e34f21a8c1270c204021ad8238c343229639d8d60621660fa7ba4f3475259de60e57d1f548a1890f6d18e33bc9acb5d17734935a0889604dc338ef6
   languageName: node
   linkType: hard
 
@@ -2842,7 +2843,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "pod-client@workspace:."
   dependencies:
-    "@datavillage-me/pod-client": ../lib
+    "@datavillage-me/pod-client": "npm:0.1.4"
     "@eslint/js": "npm:^9.11.1"
     "@types/react": "npm:^18.3.10"
     "@types/react-dom": "npm:^18.3.0"
@@ -3468,6 +3469,15 @@ __metadata:
   bin:
     uuid: dist/bin/uuid
   checksum: 10c0/eab18c27fe4ab9fb9709a5d5f40119b45f2ec8314f8d4cf12ce27e4c6f4ffa4a6321dc7db6c515068fa373c075b49691ba969f0010bf37f44c37ca40cd6bf7fe
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^11.0.3":
+  version: 11.0.5
+  resolution: "uuid@npm:11.0.5"
+  bin:
+    uuid: dist/esm/bin/uuid
+  checksum: 10c0/6f59f0c605e02c14515401084ca124b9cb462b4dcac866916a49862bcf831874508a308588c23a7718269226ad11a92da29b39d761ad2b86e736623e3a33b6e7
   languageName: node
   linkType: hard
 
