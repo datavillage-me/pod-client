@@ -1,8 +1,5 @@
 FROM node:18-alpine AS build-stage
 
-# RUN apk add py3-setuptools make gcc
-RUN apk add g++ make py3-pip git
-
 WORKDIR /app
 
 COPY package.json .yarnrc.yml .yarn yarn.lock vite.config.ts nginx.conf tsconfig.json serve.json tsconfig.app.json tsconfig.node.json index.html ./
