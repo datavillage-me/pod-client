@@ -6,6 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 .yarnrc.yml
+.npmrc
 
 node_modules
 dist

@@ -47,6 +47,18 @@ export default function RequestAccess() {
     }
   };
 
+  const getFile = async () => {
+    if (pod) {
+      const podUrl = pod.podUrl.endsWith("/")
+        ? pod.podUrl.slice(0, -1)
+        : pod.podUrl;
+      const fileUrl =
+        forFile && forFile.length ? podUrl + "/" + forFile : podUrl;
+      const file = pod.fetch(fileUrl);
+      console.log(file);
+    }
+  };
+
   return (
     <>
       <p>Logged in as {pod.userWebId}</p>
@@ -59,8 +71,9 @@ export default function RequestAccess() {
       <br />
       <input onChange={(e) => setForFile(e.target.value)} />
       <br />
-      <button onClick={startRequest}>Request access</button>
+      <button onClick={startRequest}>Grant access</button>
       <button onClick={getGrants}>Get all access requests for webid</button>
+      <button onClick={getFile}>Get File</button>
       <br />
       Access Grant URI
       <input onChange={(e) => setSelectedAccessGrant(e.target.value)} />
